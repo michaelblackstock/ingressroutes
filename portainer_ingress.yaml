@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: portainer-domain-ingress
+  namespace: portainer 
+spec:
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`portainer.globaldrum.com`)
+    kind: Rule
+    services:
+    - name: portainer
+      port: 9000
