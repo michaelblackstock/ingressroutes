@@ -1,0 +1,42 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-globaldrum-com
+  namespace: default
+spec:
+  secretName: traefik-globaldrum-com-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - traefik.globaldrum.com
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-domain-ingress
+  namespace: kube-system 
+spec:
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`traefik.globaldrum.com`)
+    kind: Rule
+    services:
+      - name: api@internal
+        kind: TraefikService
+#     middlewares:
+#       - name: traefik-dashboard-auth # Referencing the BasicAuth middleware
+#         namespace: default 
+  tls:
+    secretName: portainer-globaldrum-com-tls 
+---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: Middleware
+# metadata:
+#   name: traefik-dashboard-auth
+#   namespace: default
+# spec:
+#   basicAuth:
+#     secret: traefik-dashboard-auth-secret
