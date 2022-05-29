@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress-host-blackstock
+  namespace: default
+spec:
+  tls:
+  - hosts:
+    - www.blackstock.ml
+    secretName: blackstock-ml-tls 
+  rules:
+  - host: "www.blackstock.ml"
