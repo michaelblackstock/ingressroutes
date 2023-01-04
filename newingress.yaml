@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysite-nginx-amd2
+  labels:
+    app: mysite-nginx-amd2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysite-nginx-amd2
+  template:
+    metadata:
+      labels:
+        app: mysite-nginx-amd2
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysite-nginx-service-amd2
+spec:
+  selector:
+    app: mysite-nginx-amd2
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 30012
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: mysite-nginx-ingress-amd2
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`test.globaldrum.com`)
+#  - match: Path(`/mysite2`)
+    kind: Rule
+    services:
+    - name: mysite-nginx-service-amd2
+      port: 80
+    middlewares:
+      - name: dashboard-stripprefix-amd2
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: dashboard-stripprefix-amd2
+spec:
+  stripPrefix:
+    prefixes:
+      - /mysite2
