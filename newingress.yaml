@@ -39,16 +39,17 @@ metadata:
   name: mysite-nginx-ingress-amd2
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
   - match: Host(`test.globaldrum.com`)
-#  - match: Path(`/mysite2`)
     kind: Rule
     services:
     - name: mysite-nginx-service-amd2
       port: 80
     middlewares:
       - name: dashboard-stripprefix-amd2
+  tls:
+    secretName: test-globaldrum-com-tls 
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
