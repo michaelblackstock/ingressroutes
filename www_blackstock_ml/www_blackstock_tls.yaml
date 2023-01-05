@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: www-blackstock-ml
+  namespace: default
+spec:
+  secretName: www-blackstock-ml-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - www.blackstock.ml
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: www-blackstock-ingress-host
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: rewrite
+  namespace: default
+spec:
+  tls:
+  - hosts:
+    - www.blackstock.ml
+    secretName: www-blackstock-ml-tls 
+  rules:
+  - host: "www.blackstock.ml"

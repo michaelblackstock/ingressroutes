@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blackstock-nginx
+  labels:
+    app: blackstock-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blackstock-nginx
+  template:
+    metadata:
+      labels:
+        app: blackstock-nginx
+    spec:
+      containers:
+      - name: caddy 
+        image: caddy 
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blackstock-nginx-service
+spec:
+  selector:
+    app: blackstock-nginx
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 30013
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: blackstock-nginx-ingress
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`www.blackstock.ml`)
+    kind: Rule
+    services:
+    - name: blackstock-nginx-service
+      port: 80
+    middlewares:
+      - name: blackstock-stripprefix
+  tls:
+    secretName: www-blackstock-ml-tls 
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: blackstock-stripprefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /mysite2
