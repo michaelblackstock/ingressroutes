@@ -19,6 +19,18 @@ spec:
         image: caddy 
         ports:
         - containerPort: 80
+        volumeMounts:
+          - name: caddy-config
+            mountPath: /usr/share/caddy
+          - name: caddy-config-test
+            mountPath: /usr/share/caddy/test
+      volumes:
+        - name: caddy-config
+          configMap:
+            name: caddy-index-file 
+        - name: caddy-config-test
+          configMap:
+            name: caddy-test-file 
 ---
 apiVersion: v1
 kind: Service

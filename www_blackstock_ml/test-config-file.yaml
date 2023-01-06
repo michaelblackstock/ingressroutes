@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: caddy-test-file
+data:
+  test.html: |
+    <h1>Hello World Test</h1>
+    <h2>Contained in ConfigMap</h2>
