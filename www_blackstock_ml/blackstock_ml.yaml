@@ -39,7 +39,7 @@ metadata:
   name: blackstock-nginx-ingress
 spec:
   entryPoints:
-    - websecure
+    - web
   routes:
   - match: Host(`www.blackstock.ml`)
     kind: Rule
@@ -47,15 +47,29 @@ spec:
     - name: blackstock-nginx-service
       port: 80
     middlewares:
-      - name: blackstock-stripprefix
+      - name: redirect-https
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: blackstock-nginx-ingress-ssl
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`www.blackstock.ml`)
+    kind: Rule
+    services:
+    - name: blackstock-nginx-service
+      port: 80
   tls:
-    secretName: www-blackstock-ml-tls 
+    secretName: www-blackstock-ml-tls
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: blackstock-stripprefix
+  name: redirect-https
 spec:
-  stripPrefix:
-    prefixes:
-      - /mysite2
+  redirectScheme:
+    scheme: https
+    permanent: true
