@@ -1,0 +1,40 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins-nginx-ingress
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`jenkins.globaldrum.com`)
+    kind: Rule
+    services:
+    - name: jenkins-svc 
+      port: 80
+    middlewares:
+      - name: redirect-https
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins-nginx-ingress-ssl
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`jenkins.globaldrum.com`)
+    kind: Rule
+    services:
+    - name: jenkins-svc 
+      port: 80
+  tls:
+    secretName: jenkins-globaldrum-com-tls
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

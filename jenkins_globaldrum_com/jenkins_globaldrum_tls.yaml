@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jenkins-globaldrum-ml
+  namespace: default
+spec:
+  secretName: jenkins-globaldrum-com-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - jenkins.globaldrum.com 
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jenkins-globaldrum-ingress-host
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: rewrite
+  namespace: default
+spec:
+  tls:
+  - hosts:
+    - jenkins.globaldrum.com 
+    secretName: jenkins-globaldrum-com-tls 
+  rules:
+  - host: "jenkins.globaldrum.com"
